@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Viewer</title>
+</head>
+
+<body>
+    <input type="number" id="pageNumberInput" placeholder="Номер страницы">
+    <input type="number" id="limitInput" placeholder="Лимит">
+    <button onclick="requestData()">Запрос</button>
+    <div id="result"></div>
+
+    <script>
+        function saveToLocalStorage(data) {
+            localStorage.setItem('lastRequestData', JSON.stringify(data));
+        }
+
+        function getFromLocalStorage() {
+            return JSON.parse(localStorage.getItem('lastRequestData'));
+        }
+
+        function displayPhotos(photos) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            photos.forEach(photo => {
+                const img = document.createElement('img');
+                img.src = photo.url;
+                resultDiv.appendChild(img);
+            });
+        }
+
+        function requestData() {
+            const pageNumber = parseInt(document.getElementById('pageNumberInput').value);
+            const limit = parseInt(document.getElementById('limitInput').value);
+
+            if (isNaN(pageNumber) pageNumber < 1 pageNumber > 10) {
+                document.getElementById('result').innerText = 'Номер страницы вне диапазона от 1 до 10';
+                return;
+            }
+
+            if (isNaN(limit) limit < 1 limit > 10) {
+                document.getElementById('result').innerText = 'Лимит вне диапазона от 1 до 10';
+                return;
+            }
+
+            fetch(https: //jsonplaceholder.typicode.com/photos?_page=${pageNumber}&_limit=${limit})
+                .then(response => response.json())
+                .then(data => {
+                    displayPhotos(data);
+                    saveToLocalStorage(data);
+                })
+                .catch(error => {
+                    document.getElementById('result').innerText = 'Произошла ошибка при запросе данных';
+                    console.error('Error fetching data:', error);
+                });
+            }
+
+            const lastRequestData = getFromLocalStorage();
+            if (lastRequestData) {
+                displayPhotos(lastRequestData);
+            }
+    </script>
+</body>
+
+</html>

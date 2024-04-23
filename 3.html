@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Fetcher</title>
+</head>
+
+<body>
+    <h2>Введите число (от 1 до 10) и нажмите кнопку:</h2>
+    <input type="number" id="numberInput" min="1" max="10">
+    <button onclick="fetchPhotos()">Получить фото</button>
+
+    <div id="photoContainer"></div>
+
+    <script>
+        function fetchPhotos() {
+            const numberInput = document.getElementById('numberInput').value;
+            const photoContainer = document.getElementById('photoContainer');
+
+            // Проверяем, что введенное значение является числом и находится в диапазоне от 1 до 10
+            if (numberInput >= 1 && numberInput <= 10) {
+                const url = https: //jsonplaceholder.typicode.com/photos?_limit=${numberInput};
+
+                    // Используем XHR для отправки запроса
+                    const xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        const photos = JSON.parse(xhr.responseText);
+                        // Очищаем контейнер с фотографиями
+                        photoContainer.innerHTML = '';
+
+                        // Выводим каждую фотографию в контейнер
+                        photos.forEach(photo => {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = photo.url;
+                            imgElement.alt = photo.title;
+                            photoContainer.appendChild(imgElement);
+                        });
+                    } else {
+                        console.error('Не удалось получить данные:', xhr.statusText);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    console.error('Ошибка запроса');
+                };
+
+                xhr.send();
+            } else {
+                // Выводим сообщение об ошибке, если число вне диапазона от 1 до 10
+                photoContainer.innerHTML = '<p>Число вне диапазона от 1 до 10</p>';
+            }
+        }
+    </script>
+</body>
+
+</html>

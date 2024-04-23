@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dummy Image Generator</title>
+</head>
+
+<body>
+    <label for="width">Ширина (от 100 до 300):</label>
+    <input type="text" id="width" name="width">
+    <label for="height">Высота (от 100 до 300):</label>
+    <input type="text" id="height" name="height">
+    <button onclick="makeRequest()">Submit</button>
+    <p id="errorMessage" style="color: red;"></p>
+    <div id="imageContainer"></div>
+
+    <script>
+        function makeRequest() {
+            var width = document.getElementById('width').value;
+            var height = document.getElementById('height').value;
+
+            if (!isValidInput(width) || !isValidInput(height)) {
+                document.getElementById('errorMessage').innerText = "Одно из чисел вне диапазона от 100 до 300 или не является числом.";
+                return;
+            }
+
+            var imageUrl = `https://dummyimage.com/${width}x${height}/`;
+            fetch(imageUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    var imageContainer = document.getElementById('imageContainer');
+                    imageContainer.innerHTML = ''; // Clear previous image
+                    var img = document.createElement('img');
+                    img.src = URL.createObjectURL(blob);
+                    imageContainer.appendChild(img);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    document.getElementById('errorMessage').innerText = "Ошибка при получении изображения.";
+                });
+        }
+
+        function isValidInput(input) {
+            return !isNaN(input) && input >= 100 && input <= 300;
+        }
+    </script>
+</body>
+
+</html>
